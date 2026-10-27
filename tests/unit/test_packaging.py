@@ -23,18 +23,18 @@ def source(tmp_path: Path) -> Path:
   root = tmp_path / "source"
   root.mkdir()
   for name in ("plugin.json", "LICENSE", "README.md", "TESTING.md",
-               "CONTRIBUTING.md", "AI_POLICY.md"):
+               "CONTRIBUTING.md", "AI_POLICY.md", "package.json"):
     shutil.copyfile(ROOT / name, root / name)
   (root / ".github").mkdir()
   shutil.copyfile(ROOT / ".github/PULL_REQUEST_TEMPLATE.md",
                   root / ".github/PULL_REQUEST_TEMPLATE.md")
   for name in ("skills", "agents", "resources", "docs", "assets",
-               ".claude-plugin", ".codex-plugin"):
+               ".claude-plugin", ".codex-plugin", "extensions", "prompts"):
     shutil.copytree(ROOT / name, root / name)
   return root
 
 
-@pytest.mark.parametrize("target", ["claude", "openai"])
+@pytest.mark.parametrize("target", ["claude", "openai", "pi"])
 def test_runtime_bundle_is_complete_and_reproducible(
     source: Path, tmp_path: Path, target: str,
 ) -> None:
@@ -69,6 +69,7 @@ def test_runtime_bundle_is_complete_and_reproducible(
     assert "agents/design_critic.md" in names
     assert "docs/codex.md" in names
     assert "docs/claude.md" in names
+    assert "docs/pi.md" in names
     assert "assets/icon.svg" in names
     for image in re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', bundle.read("README.md").decode()):
       assert image in names, f"Unbundled README image: {image}"
@@ -86,6 +87,9 @@ def test_runtime_bundle_is_complete_and_reproducible(
     assert (".claude-plugin/icon.png" in names) == (target == "claude")
     assert (".claude-plugin/agents/style.md" in names) == (target == "claude")
     assert (".codex-plugin/plugin.json" in names) == (target == "openai")
+    assert ("package.json" in names) == (target == "pi")
+    assert ("extensions/index.ts" in names) == (target == "pi")
+    assert ("prompts/egm-review.md" in names) == (target == "pi")
     for info in bundle.infolist():
       assert not Path(info.filename).is_absolute()
       assert ".." not in Path(info.filename).parts
@@ -123,7 +127,7 @@ def test_skill_icon_and_host_palette_match(skill: str, base: str, facet: str) ->
     assert colors == {base, facet}
 
 
-@pytest.mark.parametrize("target", ["claude", "openai"])
+@pytest.mark.parametrize("target", ["claude", "openai", "pi"])
 def test_bundles_readme_images(source: Path, tmp_path: Path, target: str) -> None:
   image_dir = source / "docs/assets"
   image_dir.mkdir(exist_ok=True)
@@ -195,7 +199,7 @@ def test_refuses_unbundled_services(source: Path, tmp_path: Path, field: str) ->
     build(source, "openai", tmp_path / "output")
 
 
-@pytest.mark.parametrize("target", ["claude", "openai"])
+@pytest.mark.parametrize("target", ["claude", "openai", "pi"])
 @pytest.mark.parametrize("missing", [
     "skills",
     "skills/egm_bootstrap/SKILL.md",
@@ -228,7 +232,7 @@ def test_incomplete_source_fails_before_output(
   assert not output.exists()
 
 
-@pytest.mark.parametrize("target", ["claude", "openai"])
+@pytest.mark.parametrize("target", ["claude", "openai", "pi"])
 @pytest.mark.parametrize("suffix", ["", ".zip"])
 def test_rejects_dangling_output_symlinks(
     source: Path, tmp_path: Path, target: str, suffix: str,
@@ -245,7 +249,7 @@ def test_rejects_dangling_output_symlinks(
   assert list(output.iterdir()) == [link]
 
 
-@pytest.mark.parametrize("target", ["claude", "openai"])
+@pytest.mark.parametrize("target", ["claude", "openai", "pi"])
 @pytest.mark.parametrize("claim", ["file", "dangling-symlink", "symlink"])
 def test_archive_claimed_after_preflight_is_not_overwritten(
     source: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,

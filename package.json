@@ -1,0 +1,60 @@
+{
+  "name": "@rizkiaprita/egm",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Draft specs, review designs, and check implementation drift.",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "skills",
+    "spec-driven-development",
+    "design-documents",
+    "design-review",
+    "goldfish",
+    "elephant"
+  ],
+  "author": {
+    "name": "Google"
+  },
+  "homepage": "https://egm.dev",
+  "repository": "https://github.com/google/elephant-goldfish-model",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-agent-core": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/index.ts"
+    ],
+    "skills": [
+      "./skills"
+    ],
+    "prompts": [
+      "./prompts/*.md"
+    ],
+    "image": "./assets/icon.svg"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "assets/icon.svg",
+    "extensions/",
+    "skills/",
+    "!skills/**/TEST.md",
+    "!skills/**/test_scenarios.yaml",
+    "agents/",
+    "resources/",
+    "prompts/",
+    "docs/pi.md",
+    "docs/getting_started.md",
+    "docs/harnesses.md"
+  ]
+}

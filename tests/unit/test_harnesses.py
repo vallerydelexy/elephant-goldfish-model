@@ -18,6 +18,7 @@ NAME_RE = r"(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?"
 COMPATIBILITY_MANIFESTS = (
     ".claude-plugin/plugin.json",
     ".codex-plugin/plugin.json",
+    "package.json",
 )
 MARKETPLACES = (
     ".agents/plugins/marketplace.json",
@@ -217,6 +218,22 @@ def test_bundled_prompt_dependencies_and_harness_guides() -> None:
 def test_artifact_directory_override_is_documented_for_each_harness() -> None:
   # The models match this exact line in the user's prompt or instruction file.
   marker = "EGM artifact directory: "
-  for guide in ("docs/claude.md", "docs/codex.md", "docs/harnesses.md"):
+  for guide in ("docs/claude.md", "docs/codex.md", "docs/harnesses.md", "docs/pi.md"):
     text = " ".join((ROOT / guide).read_text(encoding="utf-8").split())
     assert marker in text, f"{guide} does not document `{marker}<path>`"
+
+
+def test_pi_package_manifest_and_resources() -> None:
+  manifest = read_json("package.json")
+  assert "pi-package" in manifest.get("keywords", [])
+  assert manifest.get("publishConfig") == {"access": "public"}
+  peer_deps = manifest.get("peerDependencies", {})
+  assert "@earendil-works/pi-coding-agent" in peer_deps
+  assert "dependencies" not in manifest or "@earendil-works/pi-coding-agent" not in manifest.get("dependencies", {})
+  pi_config = manifest.get("pi", {})
+  assert "./extensions/index.ts" in pi_config.get("extensions", [])
+  assert "./skills" in pi_config.get("skills", [])
+  assert (ROOT / "extensions/index.ts").is_file()
+  assert (ROOT / "docs/pi.md").is_file()
+  prompts = list((ROOT / "prompts").glob("*.md"))
+  assert len(prompts) == 6

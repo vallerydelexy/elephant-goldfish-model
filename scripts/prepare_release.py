@@ -27,7 +27,7 @@ def version_for_tag(root: Path, tag: str) -> str:
         raise ValueError("Tag must be vMAJOR.MINOR.PATCH without leading zeroes")
     version = tag[1:]
     for relative in ("plugin.json", ".claude-plugin/plugin.json",
-                     ".codex-plugin/plugin.json"):
+                     ".codex-plugin/plugin.json", "package.json"):
         manifest = json.loads((root / relative).read_text(encoding="utf-8"))
         if manifest.get("version") != version:
             raise ValueError(f"{relative}: version must match {tag}")
@@ -54,7 +54,7 @@ def prepare(root: Path, tag: str, output: Path, commit: str) -> None:
         raise ValueError("Source commit must be a full Git SHA")
     output.mkdir(parents=True, exist_ok=False)
     checksums = []
-    for target in ("claude", "openai"):
+    for target in ("claude", "openai", "pi"):
         _, archive = build(root, target, output / "build")
         destination = output / f"egm-{target}-{version}.zip"
         archive.rename(destination)
@@ -65,7 +65,7 @@ def prepare(root: Path, tag: str, output: Path, commit: str) -> None:
         f"# EGM {version}\n\nDeclared source: `{commit}`\nTag: `{tag}`\n\n"
         "Local source identity is caller-supplied and is not verified by this script. "
         "Publish only workflow-built candidates after exact-artifact checks.\n\n"
-        "Runtime archives: Claude and OpenAI. Verify downloads with "
+        "Runtime archives: Claude, OpenAI, and Pi. Verify downloads with "
         "`sha256sum -c SHA256SUMS`.\n\n"
         "For CI-built candidates, verify each ZIP with "
         "`gh attestation verify FILE --repo google/elephant-goldfish-model "

@@ -15,7 +15,7 @@ SHARED = (
     "skills/*/assets/*.svg", "skills/*/assets/*.png", "skills/*/references/*.md",
     "skills/*/references/*.json", "agents/*.md", "resources/*.md",
     "resources/document_standards/*.md", "docs/index.md", "docs/getting_started.md",
-    "docs/harnesses.md", "docs/claude.md", "docs/codex.md", "docs/faq.md",
+    "docs/harnesses.md", "docs/claude.md", "docs/codex.md", "docs/pi.md", "docs/faq.md",
     "docs/privacy.md", "docs/releases.md",
     "assets/*.svg", "assets/*.png", "docs/assets/*.svg", "docs/assets/*.png",
 )
@@ -23,6 +23,7 @@ HOST = {
     "claude": (".claude-plugin/plugin.json", ".claude-plugin/icon.png",
                ".claude-plugin/agents/*.md"),
     "openai": (".codex-plugin/plugin.json",),
+    "pi": ("package.json", "extensions/index.ts", "prompts/*.md"),
 }
 SKILLS = (
     "egm_bootstrap", "egm_brainstorm", "egm_draft", "egm_drift_report",
@@ -31,7 +32,7 @@ SKILLS = (
 REQUIRED_SHARED = (
     "plugin.json", "LICENSE", "README.md", "assets/icon.svg",
     "docs/index.md", "docs/getting_started.md", "docs/harnesses.md",
-    "docs/claude.md", "docs/codex.md", "docs/faq.md", "docs/privacy.md",
+    "docs/claude.md", "docs/codex.md", "docs/pi.md", "docs/faq.md", "docs/privacy.md",
     "resources/README.md", "resources/execution_instructions.md",
     "skills/egm_bootstrap/references/worker-return.schema.json",
     "skills/egm_draft/references/design_doc.md",
@@ -89,8 +90,12 @@ def build(root: Path, target: str, output: Path) -> tuple[Path, Path]:
   if target == "openai":
     interface = interface or manifest.get("interface", {})
     references += [interface[key] for key in ("composerIcon", "logo")]
-  else:
+  elif target == "claude":
     references.append(manifest.get("icon", "./.claude-plugin/icon.png"))
+  elif target == "pi":
+    pi_meta = manifest.get("pi", {})
+    if "image" in pi_meta:
+      references.append(pi_meta["image"])
   for reference in references:
     path = Path(reference)
     if path.is_absolute() or ".." in path.parts or path not in files:

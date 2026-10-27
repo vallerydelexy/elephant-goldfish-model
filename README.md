@@ -43,13 +43,21 @@ codex plugin marketplace add google/elephant-goldfish-model
 codex plugin add egm@egm
 ```
 
+### Pi
+
+```sh
+pi install npm:egm
+# or scoped:
+pi install npm:@google/elephant-goldfish-model
+```
+
 Start a new session after installation. For **Claude Cowork** and **ChatGPT Work**, see the [setup guide](docs/harnesses.md).
 
 ## Try your first design
 
 Open your project in your coding agent and choose a feature that needs design decisions. This example adds webhook delivery: what should happen when a delivery fails, or the same event arrives twice?
 
-Use the commands below in Antigravity. In Claude Code, use the `/egm:` prefix, for example `/egm:egm-brainstorm`. In Codex, select the corresponding EGM skill from the skill picker. Brainstorming and review require a session that can create fresh subagents.
+Use the commands below in Antigravity or Pi. In Claude Code, use the `/egm:` prefix, for example `/egm:egm-brainstorm`. In Codex, select the corresponding EGM skill from the skill picker. Brainstorming and review require a session that can create fresh subagents.
 
 <img src="skills/egm_brainstorm/assets/icon.svg" width="20" height="20" align="top" alt=""> **Explore the idea**
 

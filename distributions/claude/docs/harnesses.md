@@ -12,6 +12,7 @@ text.
 | Claude Code | `claude plugin marketplace add google/elephant-goldfish-model && claude plugin install egm@egm` |
 | Claude Cowork | Install from claude.ai/plugins or the Cowork plugin panel via marketplace `google/elephant-goldfish-model` |
 | Codex | `codex plugin marketplace add google/elephant-goldfish-model && codex plugin add egm@egm` |
+| Pi | `pi install npm:egm` (or `npm:@google/elephant-goldfish-model`) |
 | ChatGPT | Personal testing: Plugins > Add > Upload plugin archive; see [packaging](codex.md#chatgpt). Workspace import: Admin > Plugins > Add > Import marketplace, repo URL `https://github.com/google/elephant-goldfish-model`, path `.agents/plugins` |
 
 Install the whole plugin. Skill-only installers that copy `skills/` alone
@@ -38,6 +39,7 @@ while `agents/` contains reviewer personas. All hosts share the same `skills/`,
 | Claude Cowork | `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` | `skills/` (default) | Subagents run inside Cowork; hooks n/a |
 | Codex | `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json` | `skills` path | Not shipped; general-purpose subagent reads the persona file |
 | ChatGPT | `plugin.json`, `.codex-plugin/plugin.json`; `.agents/plugins/marketplace.json` for workspace import | `skills` path | Detect native tools in the current session; general-purpose agent reads the persona |
+| Pi | `package.json` | `skills/` (default) | In-process subagents via `invoke_subagent` registered by `extensions/index.ts` |
 
 Persona prompts live in `agents/`, the directory Antigravity
 scans for subagents. Each persona has `name` and `description` frontmatter, so
@@ -62,6 +64,7 @@ phrase to its own tool:
 | Claude Cowork | Cowork subagents | Yes | Subagents run inside Cowork |
 | Codex | Native spawn/wait tools; inspect the available schema | No | Detect at runtime; direct dispatch fallback |
 | ChatGPT | Native spawn/wait tools when exposed by the current Work session | No | Detect at runtime; direct dispatch fallback |
+| Pi | `invoke_subagent` | Yes | Yes |
 
 Where a harness has no named persona, the skill spawns a general-purpose
 subagent and tells it to read `agents/<file>.md` first. If a harness cannot
@@ -76,7 +79,7 @@ to ChatGPT modes that do not expose native fresh-context delegation.
 
 Skills write briefs, drafts, and reports to the working directory, or to the
 harness's artifact directory if it has one. In Claude Code, Claude Cowork,
-Codex, and ChatGPT, you can name another folder. Add this line to your prompt,
+Codex, ChatGPT, and Pi, you can name another folder. Add this line to your prompt,
 or to an agent instructions file that your harness loads (`CLAUDE.md` or
 `AGENTS.md`, in the project or at user level):
 
@@ -91,7 +94,7 @@ the project has no `CLAUDE.md`. To keep the files out of git, add the folder to
 
 ## Support Status & Contributing Other Harnesses
 
-**Antigravity**, **Claude Code**, and **Codex** pass automated installation, reviewer isolation, and end-to-end workflow fixtures.
+**Antigravity**, **Claude Code**, **Codex**, and **Pi** pass automated installation, reviewer isolation, and end-to-end workflow fixtures.
 
 **Claude Cowork** ([#105](https://github.com/google/elephant-goldfish-model/issues/105)) and **ChatGPT Work** ([#106](https://github.com/google/elephant-goldfish-model/issues/106)) have working installation paths with open cloud trace verification gaps.
 
