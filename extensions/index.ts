@@ -150,28 +150,8 @@ function createSubagentToolDefinition(pkgRoot: string) {
 }
 
 export default function egmExtension(pi: ExtensionAPI) {
-  const tool = createSubagentToolDefinition(packageRoot);
-  pi.registerTool(tool);
-
-  const registerSkillCommand = (cmd: string, skill: string, desc: string) => {
-    pi.registerCommand(cmd, {
-      description: desc,
-      handler: async (args, ctx) => {
-        const text = args ? `/skill:${skill} ${args}` : `/skill:${skill}`;
-        if (ctx?.isIdle?.() === false) {
-          pi.sendUserMessage(text, { expandPromptTemplates: true, deliverAs: "followUp" });
-          ctx?.ui?.notify?.(`${cmd} queued as follow-up.`, "info");
-        } else {
-          pi.sendUserMessage(text, { expandPromptTemplates: true });
-        }
-      },
-    });
-  };
-
-  registerSkillCommand("egm-review", "egm-review", "Review a design document with the 5-stage EGM Goldfish protocol");
-  registerSkillCommand("egm-brainstorm", "egm-brainstorm", "Explore ideas and stress-test concepts with fresh Goldfish reviewers");
-  registerSkillCommand("egm-draft", "egm-draft", "Draft a specification iteratively with section-by-section feedback");
-  registerSkillCommand("egm-resolve", "egm-resolve", "Evaluate and resolve Goldfish review findings");
-  registerSkillCommand("egm-bootstrap", "egm-bootstrap", "Bootstrap or update documentation for an existing codebase");
-  registerSkillCommand("egm-drift-report", "egm-drift-report", "Detect drift between checked-in design documents and source code");
+  pi.registerTool(createSubagentToolDefinition(packageRoot));
+  // shortcut: /egm-* slash commands come from prompts/*.md only. Registering
+  // them here too makes Pi hosts reject the whole command list as duplicate
+  // names; when these templates need per-host behavior, add it to the template.
 }

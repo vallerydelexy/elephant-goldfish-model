@@ -1,11 +1,12 @@
 {
   "name": "@rizkiaprita/egm",
-  "version": "0.1.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "Draft specs, review designs, and check implementation drift.",
   "keywords": [
     "pi-package",
     "pi",
+    "pi-extension",
     "skills",
     "spec-driven-development",
     "design-documents",
